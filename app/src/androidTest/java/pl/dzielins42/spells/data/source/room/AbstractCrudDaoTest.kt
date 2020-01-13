@@ -1,6 +1,5 @@
-package pl.dzielins42.spells.data.source
+package pl.dzielins42.spells.data.source.room
 
-import org.junit.Rule
 import org.junit.Test
 
 abstract class AbstractCrudDaoTest<M, T : BaseCrudDao<M>> : AbstractRoomDatabaseTest() {

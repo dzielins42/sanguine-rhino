@@ -1,11 +1,13 @@
-package pl.dzielins42.spells.data.entity
+package pl.dzielins42.spells.data.source.room.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "spells")
 data class SpellEntity(
-    @PrimaryKey val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val schoolId: Long,
     val name: String,
     val level: Int,
     val castingTime: String,

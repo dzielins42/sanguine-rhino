@@ -1,4 +1,4 @@
-package pl.dzielins42.spells.data.source
+package pl.dzielins42.spells.data.source.room
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

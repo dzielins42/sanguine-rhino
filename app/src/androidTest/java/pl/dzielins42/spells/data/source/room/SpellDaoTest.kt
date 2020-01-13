@@ -1,7 +1,7 @@
-package pl.dzielins42.spells.data.source
+package pl.dzielins42.spells.data.source.room
 
 import org.apache.commons.lang3.RandomStringUtils
-import pl.dzielins42.spells.data.entity.SpellEntity
+import pl.dzielins42.spells.data.source.room.entity.SpellEntity
 import java.util.*
 
 class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
@@ -13,6 +13,7 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
 
         return SpellEntity(
             id = random.nextLong(),
+            schoolId = random.nextLong(),
             name = RandomStringUtils.random(8, 0, 0, true, false, null, random),
             level = random.nextInt(10),
             castingTime = RandomStringUtils.random(8, 0, 0, true, false, null, random),

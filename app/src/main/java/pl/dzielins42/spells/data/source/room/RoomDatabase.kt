@@ -1,30 +1,42 @@
-package pl.dzielins42.spells.data.source
+package pl.dzielins42.spells.data.source.room
 
 import androidx.room.*
 import androidx.room.RoomDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
-import pl.dzielins42.spells.data.entity.SpellEntity
-import pl.dzielins42.spells.repository.BaseCrudRepository
-import pl.dzielins42.spells.repository.SpellRepository
+import pl.dzielins42.spells.data.source.room.entity.SchoolEntity
+import pl.dzielins42.spells.data.source.room.entity.SpellEntity
+import pl.dzielins42.spells.data.repository.BaseCrudRepository
+import pl.dzielins42.spells.data.repository.SpellRepository
 
 @Database(
     entities = [
-        SpellEntity::class
+        SpellEntity::class,
+        SchoolEntity::class
     ],
     version = 1
 )
 abstract class RoomDatabase : RoomDatabase() {
     abstract fun spellDao(): SpellDao
+    abstract fun schoolDao(): SchoolDao
 }
 
 @Dao
-interface SpellDao : BaseCrudDao<SpellEntity>, SpellRepository {
+interface SpellDao : BaseCrudDao<SpellEntity> {
     @Query("SELECT * FROM spells")
     override fun getAll(): Flowable<List<SpellEntity>>
 
     @Query("DELETE FROM spells WHERE id = :id")
+    override fun delete(id: Long): Completable
+}
+
+@Dao
+interface SchoolDao : BaseCrudDao<SchoolEntity> {
+    @Query("SELECT * FROM schools")
+    override fun getAll(): Flowable<List<SchoolEntity>>
+
+    @Query("DELETE FROM schools WHERE id = :id")
     override fun delete(id: Long): Completable
 }
 

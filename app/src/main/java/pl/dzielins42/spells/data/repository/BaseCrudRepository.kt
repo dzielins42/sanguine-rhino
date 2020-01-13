@@ -1,4 +1,4 @@
-package pl.dzielins42.spells.repository
+package pl.dzielins42.spells.data.repository
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
