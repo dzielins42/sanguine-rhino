@@ -2,9 +2,22 @@ package pl.dzielins42.spells.data.source.room.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "spells")
+@Entity(
+    tableName = "spells",
+    foreignKeys = [
+        ForeignKey(
+            entity = SchoolEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("schoolId"),
+            onDelete = ForeignKey.CASCADE
+        )],
+    indices = [
+        Index("schoolId")
+    ]
+)
 data class SpellEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val schoolId: Long,

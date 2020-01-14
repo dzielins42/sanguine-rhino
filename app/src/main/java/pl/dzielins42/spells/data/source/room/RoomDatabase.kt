@@ -8,7 +8,6 @@ import io.reactivex.Single
 import pl.dzielins42.spells.data.source.room.entity.SchoolEntity
 import pl.dzielins42.spells.data.source.room.entity.SpellEntity
 import pl.dzielins42.spells.data.repository.BaseCrudRepository
-import pl.dzielins42.spells.data.repository.SpellRepository
 
 @Database(
     entities = [

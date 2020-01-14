@@ -19,7 +19,7 @@ abstract class AbstractRoomDatabaseTest {
     lateinit var database: RoomDatabase
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         database = Room.inMemoryDatabaseBuilder(context, RoomDatabase::class.java)
@@ -28,7 +28,7 @@ abstract class AbstractRoomDatabaseTest {
     }
 
     @After
-    fun tearDown() {
+    open fun tearDown() {
         if (this::database.isInitialized) {
             database.close()
         }
