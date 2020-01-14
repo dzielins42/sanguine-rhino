@@ -81,4 +81,26 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
                 value.isEmpty()
             }
     }
+
+    @Test
+    fun insertAndGetJoined() {
+        val testSubscriber = getDao().getAllJoined().test()
+
+        val exampleRecord = getExampleRecord()
+
+        getDao().insert(exampleRecord).blockingGet()
+
+        testSubscriber.assertNoErrors()
+            .assertNotComplete()
+            .assertValueCount(2)
+            .assertValueAt(0) { value ->
+                value.isEmpty()
+            }
+            .assertValueAt(1) { value ->
+                value.isNotEmpty()
+                        && value.size == 1
+                        && value[0].spell == exampleRecord
+                        && value[0].school == schools.find { it.id == value[0].spell.schoolId }
+            }
+    }
 }
