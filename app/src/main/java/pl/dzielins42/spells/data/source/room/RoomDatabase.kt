@@ -5,17 +5,15 @@ import androidx.room.RoomDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
-import pl.dzielins42.spells.data.source.room.entity.SchoolEntity
-import pl.dzielins42.spells.data.source.room.entity.SpellEntity
 import pl.dzielins42.spells.data.repository.BaseCrudRepository
-import pl.dzielins42.spells.data.source.room.entity.CharacterClassEntity
-import pl.dzielins42.spells.data.source.room.entity.CompleteSpellEntity
+import pl.dzielins42.spells.data.source.room.entity.*
 
 @Database(
     entities = [
         SpellEntity::class,
         SchoolEntity::class,
-        CharacterClassEntity::class
+        CharacterClassEntity::class,
+        CharacterClassSpellCrossRef::class
     ],
     version = 1
 )
@@ -23,6 +21,7 @@ abstract class RoomDatabase : RoomDatabase() {
     abstract fun spellDao(): SpellDao
     abstract fun schoolDao(): SchoolDao
     abstract fun characterClassDao(): CharacterClassDao
+    abstract fun characterClassSpellCrossRefDao(): CharacterClassSpellCrossRefDao
 }
 
 @Dao
@@ -54,6 +53,15 @@ interface CharacterClassDao : BaseCrudDao<CharacterClassEntity> {
 
     @Query("DELETE FROM character_classes WHERE id = :id")
     override fun delete(id: Long): Completable
+}
+
+@Dao
+interface CharacterClassSpellCrossRefDao {
+    @Insert
+    fun insert(record: CharacterClassSpellCrossRef): Completable
+
+    @Delete
+    fun delete(record: CharacterClassSpellCrossRef): Completable
 }
 
 interface BaseCrudDao<M> : BaseCrudRepository<M> {

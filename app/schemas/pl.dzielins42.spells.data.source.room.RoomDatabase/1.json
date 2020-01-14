@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8cee54770f7481ba93e2857d32f05dff",
+    "identityHash": "c1bcec722603f5be3c3c7af9d41eded2",
     "entities": [
       {
         "tableName": "spells",
@@ -156,12 +156,79 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "character_classes_spells_cross_ref",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellId` INTEGER NOT NULL, `characterClassId` INTEGER NOT NULL, PRIMARY KEY(`spellId`, `characterClassId`), FOREIGN KEY(`spellId`) REFERENCES `spells`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`characterClassId`) REFERENCES `character_classes`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "spellId",
+            "columnName": "spellId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "characterClassId",
+            "columnName": "characterClassId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "spellId",
+            "characterClassId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_character_classes_spells_cross_ref_spellId",
+            "unique": false,
+            "columnNames": [
+              "spellId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_character_classes_spells_cross_ref_spellId` ON `${TABLE_NAME}` (`spellId`)"
+          },
+          {
+            "name": "index_character_classes_spells_cross_ref_characterClassId",
+            "unique": false,
+            "columnNames": [
+              "characterClassId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_character_classes_spells_cross_ref_characterClassId` ON `${TABLE_NAME}` (`characterClassId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "spells",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "spellId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "character_classes",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "characterClassId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8cee54770f7481ba93e2857d32f05dff')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c1bcec722603f5be3c3c7af9d41eded2')"
     ]
   }
 }

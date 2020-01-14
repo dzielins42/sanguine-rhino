@@ -13,7 +13,8 @@ import androidx.room.PrimaryKey
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("schoolId"),
             onDelete = ForeignKey.CASCADE
-        )],
+        )
+    ],
     indices = [
         Index("schoolId")
     ]

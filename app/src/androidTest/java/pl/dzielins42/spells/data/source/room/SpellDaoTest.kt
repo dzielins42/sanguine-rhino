@@ -3,6 +3,8 @@ package pl.dzielins42.spells.data.source.room
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.Before
 import org.junit.Test
+import pl.dzielins42.spells.data.source.room.entity.CharacterClassEntity
+import pl.dzielins42.spells.data.source.room.entity.CharacterClassSpellCrossRef
 import pl.dzielins42.spells.data.source.room.entity.SchoolEntity
 import pl.dzielins42.spells.data.source.room.entity.SpellEntity
 import java.util.*
@@ -11,6 +13,7 @@ import kotlin.collections.ArrayList
 class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
 
     private var schools: List<SchoolEntity> = emptyList()
+    private var characterClasses: List<CharacterClassEntity> = emptyList()
 
     @Before
     override fun setUp() {
@@ -19,7 +22,7 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
         val random = Random()
 
         schools = ArrayList<SchoolEntity>().apply {
-            for (i in 0..5) {
+            for (i in 0..4) {
                 add(
                     SchoolEntity(
                         id = random.nextLong(),
@@ -30,6 +33,20 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
         }
         schools.forEach {
             database.schoolDao().insert(it).blockingGet()
+        }
+
+        characterClasses = ArrayList<CharacterClassEntity>().apply {
+            for (i in 0..4) {
+                add(
+                    CharacterClassEntity(
+                        id = random.nextLong(),
+                        name = RandomStringUtils.random(8, 0, 0, true, false, null, random)
+                    )
+                )
+            }
+        }
+        characterClasses.forEach {
+            database.characterClassDao().insert(it).blockingGet()
         }
     }
 
@@ -90,6 +107,80 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
 
         getDao().insert(exampleRecord).blockingGet()
 
+        database.characterClassSpellCrossRefDao()
+            .insert(
+                CharacterClassSpellCrossRef(
+                    spellId = exampleRecord.id,
+                    characterClassId = characterClasses[0].id
+                )
+            ).blockingGet()
+        database.characterClassSpellCrossRefDao()
+            .insert(
+                CharacterClassSpellCrossRef(
+                    spellId = exampleRecord.id,
+                    characterClassId = characterClasses[1].id
+                )
+            ).blockingGet()
+
+        testSubscriber.assertNoErrors()
+            .assertNotComplete()
+            .assertValueCount(4)
+            .assertValueAt(0) { value ->
+                value.isEmpty()
+            }
+            .assertValueAt(1) { value ->
+                value.isNotEmpty()
+                        && value.size == 1
+                        && value[0].spell == exampleRecord
+                        && value[0].school == schools.find { it.id == value[0].spell.schoolId }
+                        && value[0].characterClasses.isEmpty()
+            }
+            .assertValueAt(2) { value ->
+                value.isNotEmpty()
+                        && value.size == 1
+                        && value[0].spell == exampleRecord
+                        && value[0].school == schools.find { it.id == value[0].spell.schoolId }
+                        && value[0].characterClasses.size == 1
+                        && value[0].characterClasses.any { it.id == characterClasses[0].id }
+            }
+            .assertValueAt(3) { value ->
+                value.isNotEmpty()
+                        && value.size == 1
+                        && value[0].spell == exampleRecord
+                        && value[0].school == schools.find { it.id == value[0].spell.schoolId }
+                        && value[0].characterClasses.size == 2
+                        && value[0].characterClasses.any { it.id == characterClasses[0].id }
+                        && value[0].characterClasses.any { it.id == characterClasses[1].id }
+            }
+    }
+
+    @Test
+    fun insertAndGetJoinedSingleTransaction() {
+        val testSubscriber = getDao().getAllJoined().test()
+
+        val exampleRecord = getExampleRecord()
+
+        database.runInTransaction {
+
+            getDao().insert(exampleRecord).blockingGet()
+
+            database.characterClassSpellCrossRefDao()
+                .insert(
+                    CharacterClassSpellCrossRef(
+                        spellId = exampleRecord.id,
+                        characterClassId = characterClasses[0].id
+                    )
+                ).blockingGet()
+            database.characterClassSpellCrossRefDao()
+                .insert(
+                    CharacterClassSpellCrossRef(
+                        spellId = exampleRecord.id,
+                        characterClassId = characterClasses[1].id
+                    )
+                ).blockingGet()
+
+        }
+
         testSubscriber.assertNoErrors()
             .assertNotComplete()
             .assertValueCount(2)
@@ -101,6 +192,9 @@ class SpellDaoTest : AbstractCrudDaoTest<SpellEntity, SpellDao>() {
                         && value.size == 1
                         && value[0].spell == exampleRecord
                         && value[0].school == schools.find { it.id == value[0].spell.schoolId }
+                        && value[0].characterClasses.size == 2
+                        && value[0].characterClasses.any { it.id == characterClasses[0].id }
+                        && value[0].characterClasses.any { it.id == characterClasses[1].id }
             }
     }
 }
